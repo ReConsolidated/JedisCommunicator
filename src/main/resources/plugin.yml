@@ -1,0 +1,5 @@
+name: JedisCommunicator
+version: '${project.version}'
+main: io.github.reconsolidated.jediscommunicator.JedisCommunicator
+api-version: 1.18
+authors: [ GracjanPasik ]
