@@ -1,32 +1,66 @@
 package io.github.reconsolidated.jediscommunicator;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.ServicePriority;
-import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.Jedis;
 
 import java.util.*;
 
-public final class JedisCommunicator extends JavaPlugin {
-    private Jedis jedis;
+public final class JedisCommunicator {
+    private final Jedis jedis;
 
-    @Override
-    public void onEnable() {
-        // Plugin startup logic
-        getServer().getServicesManager().register(JedisCommunicator.class, this, this, ServicePriority.Normal);
-
-        try {
-            jedis = new Jedis("grypciocraft.pl", 6379);
-        } catch (Exception e) {
-            e.printStackTrace();
-            jedis = null;
-            return;
-        }
-        if (jedis == null) {
-            Bukkit.getLogger().warning("Couldn't connect to jedis");
-            return;
-        }
+    public JedisCommunicator() {
+        jedis = new Jedis("grypciocraft.pl", 6379);
         jedis.auth("kWy681@t");
+    }
+
+    /**
+     * @param playerName
+     * @return players' party (if he doesnt have one, returns a party with him as an owner)
+     */
+    public Party getParty(String playerName) {
+        for (Party party : getAllParties()) {
+            if (party.getAllMembers().contains(playerName)) {
+                return party;
+            }
+        }
+        return new Party(playerName);
+    }
+
+    public boolean isInParty(String playerName) {
+        for (Party party : getAllParties()) {
+            if (party.getAllMembers().contains(playerName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     *
+     * @return all existing parties (with more than 1 player)
+     */
+    public List<Party> getAllParties() {
+        List<Party> parties = new ArrayList<>();
+        for (String key : jedis.keys("party|*")) {
+            String ownerName = key.split("\\|")[1];
+            Set<String> members = jedis.smembers(key);
+            parties.add(new Party(ownerName, members));
+        }
+        return parties;
+    }
+
+    /**
+     * Saves given party if it has any members. Otherwise attempts to delete party data for owner.
+     * @param party
+     */
+    public void saveParty(Party party) {
+        if (party.getMembers().size() > 0) {
+            for (String s : party.getMembers()) {
+                jedis.sadd("party|" + party.getOwner(), s);
+            }
+        } else {
+            jedis.del("party|" + party.getOwner());
+        }
     }
 
     public List<String> getNotifications(String playerName) {
@@ -78,7 +112,7 @@ public final class JedisCommunicator extends JavaPlugin {
         serverInfo.put("maxPartySize", "" + maxPartySize);
         serverInfo.put("type", type);
         jedis.hset("server_info_" + serverName + "", serverInfo);
-        jedis.expire(serverName, 1);
+        jedis.expire("server_info_" + serverName + "", 1);
     }
 
     /**
@@ -130,8 +164,4 @@ public final class JedisCommunicator extends JavaPlugin {
         return bestServerInfo.get("name");
     }
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-    }
 }

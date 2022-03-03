@@ -1,5 +1,5 @@
 name: JedisCommunicator
 version: '${project.version}'
 main: io.github.reconsolidated.jediscommunicator.JedisCommunicator
-api-version: 1.16
+api-version: 1.8
 authors: [ GracjanPasik ]
