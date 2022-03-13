@@ -5,11 +5,20 @@ import redis.clients.jedis.Jedis;
 import java.util.*;
 
 public final class JedisCommunicator {
-    private final Jedis jedis;
+    private Jedis jedis;
 
     public JedisCommunicator() {
         jedis = new Jedis("grypciocraft.pl", 6379);
         jedis.auth("kWy681@t");
+    }
+
+    public void reconnect() {
+        jedis = new Jedis("grypciocraft.pl", 6379);
+        jedis.auth("kWy681@t");
+    }
+
+    public boolean isClosed() {
+        return !jedis.isConnected() || jedis.isBroken();
     }
 
     /**
