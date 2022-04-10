@@ -136,9 +136,9 @@ public final class JedisCommunicator {
             if (type.equalsIgnoreCase(map.get("type"))) {
                 String serverName = map.get("name");
                 boolean isOpen = Boolean.parseBoolean(map.get("isOpen"));
-                int currentPlayers = Integer.parseInt("currentPlayers");
-                int maxPlayers = Integer.parseInt("maxPlayers");
-                int maxPartySize = Integer.parseInt("maxPartySize");
+                int currentPlayers = Integer.parseInt(map.get("currentPlayers"));
+                int maxPlayers = Integer.parseInt(map.get("maxPlayers"));
+                int maxPartySize = Integer.parseInt(map.get("maxPartySize"));
                 result.add(new JedisServerInfo(serverName, isOpen, currentPlayers, maxPlayers, maxPartySize, type));
             }
         }
