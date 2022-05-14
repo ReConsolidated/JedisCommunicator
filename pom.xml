@@ -6,7 +6,7 @@
 
     <groupId>io.github.reconsolidated</groupId>
     <artifactId>jediscommunicator</artifactId>
-    <version>1.09</version>
+    <version>1.15</version>
     <packaging>jar</packaging>
 
     <name>JedisCommunicator</name>

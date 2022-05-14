@@ -12,6 +12,10 @@ public final class JedisCommunicator {
         jedis.auth("kWy681@t");
     }
 
+    public void clear() {
+        jedis.flushAll();
+    }
+
     public void reconnect() {
         jedis = new Jedis("grypciocraft.pl", 6379);
         jedis.auth("kWy681@t");
@@ -56,6 +60,10 @@ public final class JedisCommunicator {
             parties.add(new Party(ownerName, members));
         }
         return parties;
+    }
+
+    public void setRejoin() {
+
     }
 
     /**
@@ -112,7 +120,7 @@ public final class JedisCommunicator {
      * @param maxPartySize - Maximum size of a party that could join the server
      * @param type - type of the server, e.g. bedwars1, vdIce, survival
      */
-    public void setServerInfo(String serverName, boolean isOpen, int currentPlayers, int maxPlayers, int maxPartySize, String type) {
+    public void setServerInfo(String serverName, boolean isOpen, int currentPlayers, int maxPlayers, int maxPartySize, String type, boolean ranked) {
         Map<String, String> serverInfo = new HashMap<String, String>();
         serverInfo.put("name", serverName);
         serverInfo.put("isOpen", "" + isOpen);
@@ -120,6 +128,7 @@ public final class JedisCommunicator {
         serverInfo.put("maxPlayers", "" + maxPlayers);
         serverInfo.put("maxPartySize", "" + maxPartySize);
         serverInfo.put("type", type);
+        serverInfo.put("ranked", "" + ranked);
         jedis.hset("server_info_" + serverName + "", serverInfo);
         jedis.expire("server_info_" + serverName + "", 1);
     }
@@ -139,7 +148,8 @@ public final class JedisCommunicator {
                 int currentPlayers = Integer.parseInt(map.get("currentPlayers"));
                 int maxPlayers = Integer.parseInt(map.get("maxPlayers"));
                 int maxPartySize = Integer.parseInt(map.get("maxPartySize"));
-                result.add(new JedisServerInfo(serverName, isOpen, currentPlayers, maxPlayers, maxPartySize, type));
+                boolean ranked = Boolean.parseBoolean(map.get("ranked"));
+                result.add(new JedisServerInfo(serverName, isOpen, currentPlayers, maxPlayers, maxPartySize, type, ranked));
             }
         }
         return result;
