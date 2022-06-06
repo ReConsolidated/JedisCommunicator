@@ -144,11 +144,12 @@ public final class JedisCommunicator {
             Map<String, String> map = jedis.hgetAll(key);
             if (type.equalsIgnoreCase(map.get("type"))) {
                 String serverName = map.get("name");
-                boolean isOpen = Boolean.parseBoolean(map.get("isOpen"));
+                boolean isOpen = map.get("isOpen").equals("true");
                 int currentPlayers = Integer.parseInt(map.get("currentPlayers"));
                 int maxPlayers = Integer.parseInt(map.get("maxPlayers"));
                 int maxPartySize = Integer.parseInt(map.get("maxPartySize"));
-                boolean ranked = Boolean.parseBoolean(map.get("ranked"));
+                boolean ranked = map.get("ranked").equals("true");
+
                 result.add(new JedisServerInfo(serverName, isOpen, currentPlayers, maxPlayers, maxPartySize, type, ranked));
             }
         }
