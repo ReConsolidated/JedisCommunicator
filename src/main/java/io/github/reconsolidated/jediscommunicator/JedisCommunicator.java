@@ -9,7 +9,6 @@ public final class JedisCommunicator {
 
     public JedisCommunicator() {
         jedis = new Jedis("grypciocraft.pl", 6379);
-        jedis.auth("kWy681@t");
     }
 
     public void clear() {
@@ -18,7 +17,6 @@ public final class JedisCommunicator {
 
     public void reconnect() {
         jedis = new Jedis("grypciocraft.pl", 6379);
-        jedis.auth("kWy681@t");
     }
 
     public boolean isClosed() {
